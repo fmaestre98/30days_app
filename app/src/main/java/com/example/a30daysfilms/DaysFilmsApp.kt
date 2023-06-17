@@ -9,17 +9,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.a30daysfilms.domain.Film
 import com.example.a30daysfilms.ui.screens.DetailScreen
@@ -52,8 +58,6 @@ fun DaysFilmsApp() {
 
 @Composable
 fun DaysFilmsNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
-    val viewModel = hiltViewModel<FilmViewModel>()
-    val films=viewModel.filmPagerFlow.collectAsLazyPagingItems()
     NavHost(
         navController = navController,
         startDestination = SPLASH,
@@ -62,25 +66,41 @@ fun DaysFilmsNavHost(navController: NavHostController, modifier: Modifier = Modi
         composable(route = SPLASH) {
             SplashScreen {
                 navController.popBackStack()
-                navController.navigate(route = LIST)
+                navController.navigate(route = MOVIES)
             }
         }
-        composable(route = LIST) {
-            ListScreen(films =films) { film: Film ->
-                navController.navigate(route = "$DETAILS/${film.id}")
+        navigation(route = MOVIES, startDestination = LIST) {
+            composable(route = LIST) {
+                val viewModel = it.sharedViewModel<FilmViewModel>(navController = navController)
+                val films = viewModel.filmPagerFlow.collectAsLazyPagingItems()
+                ListScreen(films = films) { film: Film ->
+                    viewModel.selectFilm(film)
+                    navController.navigate(route = "$DETAILS")
+                }
             }
-        }
 
-        composable(
-            route = "$DETAILS/{$FILM_ID}",
-            arguments = listOf(navArgument(FILM_ID) { defaultValue = 1 })
-        ) {
+            composable(
+                route = "$DETAILS",
+            ) {
+                val viewModel = it.sharedViewModel<FilmViewModel>(navController = navController)
+                val state by viewModel.state.collectAsState()
+                DetailScreen(film =state.selectedFilm!!)
+            }
 
-           // DetailScreen(film = )
         }
 
     }
 }
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavHostController): FilmViewModel {
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel<FilmViewModel>()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return hiltViewModel<FilmViewModel>(parentEntry)
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

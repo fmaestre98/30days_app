@@ -52,7 +52,7 @@ object AppModule {
     @OptIn(ExperimentalPagingApi::class)
     @Provides
     @Singleton
-    fun provideCharacterPager(
+    fun provideFilmPager(
         filmDatabase: FilmDatabase,
         filmsApi: FilmsApi
     ): Pager<Int, FilmEntity> {
