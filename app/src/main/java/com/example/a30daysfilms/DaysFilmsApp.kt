@@ -6,21 +6,24 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.a30daysfilms.data.FilmsRepository
+import androidx.navigation.navArgument
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.a30daysfilms.domain.Film
+import com.example.a30daysfilms.ui.screens.DetailScreen
+import com.example.a30daysfilms.ui.screens.FilmViewModel
 import com.example.a30daysfilms.ui.screens.ListScreen
 import com.example.a30daysfilms.ui.screens.SplashScreen
 import com.example.a30daysfilms.ui.theme.DaysFilmsTheme
@@ -37,8 +40,9 @@ fun DaysFilmsApp() {
         val currentDestination = currentBackStack?.destination
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = {  if (currentDestination?.route!= SPLASH)TopAppBar() }
+            topBar = { if (currentDestination?.route != SPLASH) TopAppBar() }
         ) {
+
             DaysFilmsNavHost(navController = navController, modifier = Modifier.padding(it))
         }
     }
@@ -48,6 +52,8 @@ fun DaysFilmsApp() {
 
 @Composable
 fun DaysFilmsNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
+    val viewModel = hiltViewModel<FilmViewModel>()
+    val films=viewModel.filmPagerFlow.collectAsLazyPagingItems()
     NavHost(
         navController = navController,
         startDestination = SPLASH,
@@ -60,7 +66,17 @@ fun DaysFilmsNavHost(navController: NavHostController, modifier: Modifier = Modi
             }
         }
         composable(route = LIST) {
-             ListScreen(films = FilmsRepository.films)
+            ListScreen(films =films) { film: Film ->
+                navController.navigate(route = "$DETAILS/${film.id}")
+            }
+        }
+
+        composable(
+            route = "$DETAILS/{$FILM_ID}",
+            arguments = listOf(navArgument(FILM_ID) { defaultValue = 1 })
+        ) {
+
+           // DetailScreen(film = )
         }
 
     }
@@ -78,7 +94,7 @@ fun TopAppBar(modifier: Modifier = Modifier) {
             )
         },
         modifier = modifier,
-        colors =TopAppBarDefaults.centerAlignedTopAppBarColors(MaterialTheme.colorScheme.primary)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(MaterialTheme.colorScheme.primary)
     )
 }
 
