@@ -1,12 +1,16 @@
 package com.example.a30daysfilms.data.remote
 
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
 interface FilmsApi {
     @GET("movie/popular")
     suspend fun getFilms(@Query("page") page: Int):ApiResult
+
+    @GET("movie/{movie_id}/images")
+    suspend fun getFilmImages(@Path("movie_id") movie_id: Int):ImagesResponse
 
     companion object{
         const val BASE_URL="https://api.themoviedb.org/3/"

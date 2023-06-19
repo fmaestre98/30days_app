@@ -7,7 +7,8 @@ import com.example.a30daysfilms.domain.Film
 fun FilmDTO.toFilmEntity(index: Int): FilmEntity {
 
     return FilmEntity(
-        id=index,
+        id = index,
+        idApi = id,
         adult = adult,
         backdropPath = backdrop_path,
         genreIds = genre_ids.joinToString(separator = ","),
@@ -28,6 +29,7 @@ fun FilmEntity.toFilm(): Film {
 
     return Film(
         id = id,
+        idApi = idApi,
         adult = adult,
         backdrop_path = backdropPath,
         genre_ids = genreIds.split(",").toList().map { it.toInt() },

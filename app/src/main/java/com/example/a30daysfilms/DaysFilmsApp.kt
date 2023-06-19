@@ -17,14 +17,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.a30daysfilms.domain.Film
@@ -84,7 +82,7 @@ fun DaysFilmsNavHost(navController: NavHostController, modifier: Modifier = Modi
             ) {
                 val viewModel = it.sharedViewModel<FilmViewModel>(navController = navController)
                 val state by viewModel.state.collectAsState()
-                DetailScreen(film =state.selectedFilm!!)
+                DetailScreen(state=state)
             }
 
         }
