@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -54,19 +57,24 @@ fun DetailScreen(modifier: Modifier = Modifier, state: FilmViewModel.FilmsState)
             } else if (state.imagesList?.isEmpty() == false) {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     items(state.imagesList) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(context = LocalContext.current)
-                                .data(FilmsApi.IMG_URL + it.file_path)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = stringResource(R.string.image_description),
-                            error = painterResource(R.drawable.ic_broken_image),
-                            placeholder = painterResource(R.drawable.loading_img),
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth(.75f)
-                                .fillMaxHeight()
-                        )
+                        Card(
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier.height(250.dp).width(200.dp)
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context = LocalContext.current)
+                                    .data(FilmsApi.IMG_URL + it.file_path)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = stringResource(R.string.image_description),
+                                error = painterResource(R.drawable.ic_broken_image),
+                                placeholder = painterResource(R.drawable.loading_img),
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
                     }
 
 

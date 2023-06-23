@@ -107,7 +107,7 @@ fun ListScreen(
                     item {
                         if (films.loadState.append is LoadState.Loading) {
                            Row(modifier= Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                               CircularProgressIndicator()
+                              // CircularProgressIndicator()
                            }
 
                         }
