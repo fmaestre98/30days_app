@@ -140,19 +140,20 @@ fun FilmItem(film: Film, modifier: Modifier = Modifier) {
                 placeholder = painterResource(R.drawable.loading_img),
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(2f)
                     .fillMaxHeight()
             )
             Column(
-                modifier = Modifier.weight(2f),
+                modifier = Modifier.weight(3f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = film.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(4.dp)
                 )
                 Text(
+                    style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 16.dp),
                     text = film.overview.take(120) + "..."
                 )
